@@ -54,7 +54,7 @@ $config = [
             'linkAssets' => YII_DEBUG,
             'bundles' => [
                 'app\assets\AppAsset' => [
-                    'sourcePath' => "@app/themes/$themeName/assets/app",
+                    'sourcePath' => "@app/assets/app",
                 ],
             ],
         ],
