@@ -1,0 +1,12 @@
+CREATE ROLE pdb LOGIN ENCRYPTED PASSWORD ''
+   VALID UNTIL 'infinity';
+
+CREATE DATABASE pdb
+  WITH ENCODING='UTF8'
+       OWNER=pdb
+       TEMPLATE=template0
+       LC_COLLATE='pl_PL.UTF-8'
+       LC_CTYPE='pl_PL.UTF-8'
+       CONNECTION LIMIT=-1;
+
+CREATE EXTENSION btree_gist;

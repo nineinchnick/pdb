@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# Display list of commits and modified files and ask for confirmation.
+
+remote="$1"
+url="$2"
+
+z40=0000000000000000000000000000000000000000
+
+oldifs=$IFS
+IFS=' '
+empty=""
+
+if [ "$remote" = "origin" ]; then
+    exit 0
+fi
+
+while read local_ref local_sha remote_ref remote_sha
+do
+    empty="false"
+    if [ "$local_sha" = "$remote_sha" ]; then
+        exit 0;
+    fi
+
+    if [ "$local_sha" = $z40 ]; then
+        echo "Deleting something, is this ok?"
+        exit 1
+    else
+        if [ "$remote_sha" = $z40 ]; then
+            # New branch, examine all commits
+            range="$local_sha"
+        else
+            # Update to existing branch, examine new commits
+            range="$remote_sha..$local_sha"
+        fi
+
+        # Check for WIP commit
+        echo -e "\033[0;36m=============================== Uploading commits: ==========================\033[0m"
+        echo -e ""
+        git --no-pager log --color=always --date=iso --pretty=format:"%h | %<(20,trunc)%an %ad %>(15)(%ar) %Cgreen%s%Creset" "$range"
+        echo -e "\n"
+
+        echo -e "\033[0;36m===============================  Files modified:  ==========================\033[0m"
+        echo -e ""
+        git --no-pager diff --stat --summary "$range"
+        echo -e "\n"
+    fi
+done
+IFS=$oldifs
+
+if [ -z "$empty" ]; then
+    exit 0;
+fi;
+
+exec < /dev/tty
+read -p "Continue? [y|N] " -n 1 -r
+echo -e "\n"
+if [[ ! $REPLY =~ ^[YyTt]$ ]]; then
+    exit 1
+fi
+exit 0

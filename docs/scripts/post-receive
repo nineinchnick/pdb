@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+## store the arguments given to the script
+read oldrev newrev refname
+
+# The deployed directory (the running site)
+DEPLOYDIR=/var/www/exw.git/
+COMPOSER=/usr/local/bin/composer.phar
+YII_ENV=test
+YIIC=./yii
+YIIC_OPTIONS=--interactive=0
+
+test "${PWD%/.git}" != "$PWD" && cd ..
+unset GIT_DIR GIT_WORK_TREE
+
+git reset --hard
+
+cd "$DEPLOYDIR";
+
+$COMPOSER install
+YII_ENV=$YII_ENV $YIIC migrate $YIIC_OPTIONS
+YII_ENV=$YII_ENV $YIIC cache/flush-all $YIIC_OPTIONS
+rm -rf $DEPLOYDIR/web/assets/*
+#$YIIC clearcache opcodes https://exw.dellner.com/site/opcodes
+
+cd -
+
