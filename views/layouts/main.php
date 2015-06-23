@@ -69,7 +69,7 @@ $this->registerJs('$(function () { $(\'[data-toggle="tooltip"]\').tooltip(); });
     <footer class="footer">
         <div class="container">
             <p class="pull-left">
-                &copy; copyright <?= date('Y') ?> <strong><?= Yii::$app->params['copyright'] ?></strong>
+                &copy; copyright <?= date('Y') ?> <strong><?= isset(Yii::$app->params['copyright']) ? Yii::$app->params['copyright'] : '' ?></strong>
             </p>
             <p class="pull-right">
                 <?= '';//Yii::powered() ?>

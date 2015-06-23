@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bda2aec068a04c3c072c1766f13014ad",
+    "hash": "b365e8b0193b3f7911ba6c688d2c5f17",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -677,45 +677,12 @@
             "time": "2015-06-19 14:49:16"
         },
         {
-            "name": "netis/sync",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.netis.pl:erp/sync.git",
-                "reference": "d5a15c0ef1dd9a85e427cb0b35094b8ede626735"
-            },
-            "require": {
-                "yiisoft/yii2": ">=2.0.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "netis\\sync\\": ""
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Jan Waś",
-                    "email": "jwas@netis.pl"
-                }
-            ],
-            "description": "Sync ERP module.",
-            "support": {
-                "issues": "http://gitlab.netis.pl/erp/sync/issues",
-                "source": "http://gitlab.netis.pl/erp/sync/tree/master"
-            },
-            "time": "2015-05-15 15:28:45"
-        },
-        {
             "name": "netis/yii2-utils",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.netis.pl:web-tools/yii2-utils.git",
-                "reference": "9b485f3c15ea7e52ae2b1e5b4c1aa520bed2cad2"
+                "reference": "272155e8d64f8c4bccb4b71e6d1d7d67ec9b2eeb"
             },
             "require": {
                 "maddoger/yii2-select2": "1.4.*",
@@ -745,7 +712,7 @@
                 "issues": "http://gitlab.netis.pl/web-tools/yii2-utils/issues",
                 "source": "http://gitlab.netis.pl/web-tools/yii2-utils/tree/master"
             },
-            "time": "2015-06-22 09:53:29"
+            "time": "2015-06-23 20:23:22"
         },
         {
             "name": "nikic/php-parser",
@@ -833,6 +800,51 @@
             ],
             "description": "Extensions to the Yii 2 PHP framework allowing tracking and viewing change history of a model.",
             "time": "2015-05-25 05:08:44"
+        },
+        {
+            "name": "nineinchnick/yii2-sync",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nineinchnick/yii2-sync.git",
+                "reference": "3f6128b240d5b1876a408177487dbe7971728b7d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nineinchnick/yii2-sync/zipball/3f6128b240d5b1876a408177487dbe7971728b7d",
+                "reference": "3f6128b240d5b1876a408177487dbe7971728b7d",
+                "shasum": ""
+            },
+            "require": {
+                "netis/yii2-utils": "dev-master",
+                "yiisoft/yii2": "*",
+                "yiisoft/yii2-bootstrap": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.8"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "nineinchnick\\sync\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Waś",
+                    "email": "janek.jan@gmail.com",
+                    "homepage": "http://niix.pl/"
+                }
+            ],
+            "description": "A module for apps based on the Yii 2 framework for tracking data exchange with remote systems.",
+            "support": {
+                "issues": "https://github.com/nineinchnick/yii2-sync/issues",
+                "source": "https://github.com/nineinchnick/yii2-sync"
+            },
+            "time": "2015-06-22 21:18:33"
         },
         {
             "name": "nineinchnick/yii2-usr",
@@ -1543,10 +1555,10 @@
     "stability-flags": {
         "nineinchnick/yii2-audit": 20,
         "nineinchnick/yii2-usr": 20,
+        "nineinchnick/yii2-sync": 20,
         "netis/yii2-utils": 20,
         "netis/erp": 20,
         "netis/assortment": 20,
-        "netis/sync": 20,
         "dmstr/yii2-migrate-command": 20
     },
     "prefer-stable": false,

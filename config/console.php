@@ -23,6 +23,7 @@ return [
                 '@vendor/netis/yii2-utils/log/migrations',
                 '@vendor/netis/erp/migrations',
                 '@vendor/netis/assortment/migrations',
+                '@vendor/nineinchnick/yii2-sync/migrations',
             ],
         ],
     ],

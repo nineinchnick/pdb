@@ -24,6 +24,7 @@ $config = [
         ],
         'utils',
         'assortment',
+        'sync',
     ],
     'components' => array_merge($components, [
         'request' => [
@@ -89,6 +90,9 @@ $config = [
         ],
         'assortment' => [
             'class' => 'netis\assortment\Module',
+        ],
+        'sync' => [
+            'class' => 'nineinchnick\sync\Module',
         ],
     ],
     'params' => $params,

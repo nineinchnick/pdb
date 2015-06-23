@@ -26,10 +26,10 @@
     "yiisoft/yii2-swiftmailer": "2.0.*",
     "nineinchnick/yii2-audit": "dev-master",
     "nineinchnick/yii2-usr": "dev-master",
+    "nineinchnick/yii2-sync": "dev-master",
     "netis/yii2-utils": "dev-master",
     "netis/erp": "dev-master",
     "netis/assortment": "dev-master",
-    "netis/sync": "dev-master",
     "bower-asset/font-awesome": "4.*",
     "dmstr/yii2-migrate-command": "dev-master"
   },
