@@ -8,7 +8,8 @@
 
 namespace app\models;
 
+use nineinchnick\sync\models\File;
+
 class PriceParser extends \nineinchnick\sync\models\Parser
 {
-    
 }
