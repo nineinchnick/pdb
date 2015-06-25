@@ -79,11 +79,6 @@ $config = [
                     'layout' => '//main',
                 ],
             ],
-            'profileFormBehaviors' => [
-                'extendedProfile' => [
-                    'class'=>'app\models\ProfileForm',
-                ],
-            ],
         ],
         'utils' => [
             'class' => 'netis\erp\Module',

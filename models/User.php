@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use netis\contractors\models\Contractor;
 use nineinchnick\usr\models\SearchForm;
 use Yii;
 use nineinchnick\usr\components;
@@ -28,10 +27,6 @@ use yii\data\ActiveDataProvider;
  * @property boolean $email_verified
  * @property boolean $is_active
  * @property boolean $is_disabled
- * @property string $title
- * @property string $phone_number
- * @property string $im_skype
- * @property string $language
  * @property string $one_time_password_secret
  * @property string $one_time_password_code
  * @property integer $one_time_password_counter
@@ -47,11 +42,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
     components\PasswordHistoryIdentityInterface,
     components\ManagedIdentityInterface
 {
-    /**
-     * @var string comma concatenated ids of related contractors, used by ManagedIdentityInterface
-     */
-    public $contractors;
-
     /**
      * @inheritdoc
      */
@@ -70,7 +60,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
             [
                 [
                     'username', 'email', 'firstname', 'lastname',
-                    'title', 'phone_number', 'im_skype', 'language',
                 ],
                 'trim',
             ],
@@ -86,7 +75,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
             [
                 [
                     'username', 'email', 'firstname', 'lastname',
-                    'title', 'phone_number', 'im_skype', 'language',
                     'is_active', 'is_disabled'
                 ],
                 'default',
@@ -118,7 +106,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
                 [
                     'username', 'email', 'firstname', 'lastname',
                     //'auth_key', 'activation_key', 'access_token',
-                    'title', 'phone_number', 'im_skype', 'language',
                 ],
                 'string',
                 'max' => 255,
@@ -151,10 +138,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
             'email_verified' => Yii::t('models', 'Email Verified'),
             'is_active' => Yii::t('models', 'Is Active'),
             'is_disabled' => Yii::t('models', 'Is Disabled'),
-            'title' => Yii::t('models', 'Title'),
-            'phone_number' => Yii::t('models', 'Phone Number'),
-            'im_skype' => Yii::t('models', 'Im Skype'),
-            'language' => Yii::t('models', 'Language'),
             'one_time_password_secret' => Yii::t('models', 'One Time Password Secret'),
             'one_time_password_code' => Yii::t('models', 'One Time Password Code'),
             'one_time_password_counter' => Yii::t('models', 'One Time Password Counter'),
@@ -192,11 +175,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
     public function getUserUsedPasswords()
     {
         return $this->hasMany(UserUsedPassword::className(), ['user_id' => 'id'])->orderBy('set_on DESC');
-    }
-
-    public function getContractors()
-    {
-        return $this->hasMany(Contractor::className(), ['id' => 'contractor_id'])->viaTable('{{%public.contractor_user}}', ['user_id' => 'id']);
     }
 
     /**
@@ -383,11 +361,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
             'email' => 'email',
             'firstName' => 'firstname',
             'lastName' => 'lastname',
-            'title' => 'title',
-            'phone_number' => 'phone_number',
-            'im_skype' => 'im_skype',
-            'language' => 'language',
-            'contractors' => 'contractors',
         ];
     }
 
@@ -411,19 +384,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
 
             return false;
         }
-        $existing = $this->getContractors()->indexBy('id')->all();
-        $contractors = Contractor::findAll(explode(',', $this->contractors));
-        foreach ($contractors as $contractor) {
-            if (!isset($existing[$contractor->getPrimaryKey()])) {
-                $this->link('contractors', $contractor);
-            } else {
-                unset($existing[$contractor->getPrimaryKey()]);
-            }
-        }
-        foreach ($existing as $contractor) {
-            $this->unlink('contractors', $contractor);
-        }
-
         return true;
     }
 
@@ -459,7 +419,6 @@ class User extends \netis\utils\crud\ActiveRecord implements
                 $result[$allowedAttributes[$name]] = $value;
             }
         }
-        $result['contractors'] = implode(',', $this->getContractors()->select('id')->asArray()->column());
 
         return $result;
     }

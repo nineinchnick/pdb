@@ -11,5 +11,5 @@ return array_merge([
 ] : (YII_ENV === 'test' ? [
     'dsn' => 'pgsql:host=localhost;port=5434;dbname=pdb',
     'username' => 'pdb',
-    'password' => 'xo0Epees',
+    'password' => 'pdb',
 ] : []));

@@ -49,7 +49,7 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
         $content = base64_decode($file->content);
         $counter = 0;
         foreach (explode("\r\n", $content) as $line) {
-            if ($counter++ === 0) {
+            if ($counter++ === 0 || empty($line)) {
                 continue;
             }
             $fields = str_getcsv($line, "\t");
@@ -61,9 +61,9 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
                 continue;
             }
             if ($isPromo === 'Y') {
-                //$client->setPrice($products[$code]['product_id'], $price, $products[$code]['specialOffer']);
+                $client->setPrice($products[$code]['product_id'], $price, isset($products[$code]['specialOffer']) ? $products[$code]['specialOffer'] : false);
             } else {
-                //$client->delPrice($products[$code]['product_id']);
+                $client->delPrice($products[$code]['product_id']);
             }
             $setAttributes = [];
             if (!empty($sex)) {
@@ -76,10 +76,9 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
                 $setAttributes[$color] = $color;
             }
             if (!empty($setAttributes)) {
-                //$client->setAttributes($products[$code]['product_id'], $setAttributes);
+                $client->setAttributes($products[$code]['product_id'], $setAttributes);
             }
         }
-        exit(0);
 
         $file->processed_on = date('Y-m-d H:i:s');
         $file->save(false);

@@ -180,9 +180,11 @@ class ShoperClient extends \yii\base\Object
                 $this->session, "product.promo.create",
                 [
                     $product_id,
-                    $promo !== null ? $promo['date_from'] : date('Y-m-d'),
-                    $promo !== null ? $promo['date_to'] : '2038-01-01',
-                    $price,
+					[
+						is_array($promo) ? $promo['date_from'] : date('Y-m-d'),
+						is_array($promo) ? $promo['date_to'] : '2038-01-01',
+						$price,
+					],
                 ],
             ],
         ];
