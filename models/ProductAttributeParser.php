@@ -62,8 +62,8 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
             }
             if ($isPromo === 'Y') {
                 $client->setPrice($products[$code]['product_id'], $price, isset($products[$code]['specialOffer']) ? $products[$code]['specialOffer'] : false);
-            } else {
-                $client->delPrice($products[$code]['product_id']);
+            } elseif (isset($products[$code]['specialOffer'])) {
+				$client->delPrice($products[$code]['product_id']);
             }
             $setAttributes = [];
             if (!empty($sex)) {

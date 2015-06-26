@@ -156,22 +156,28 @@ class ShoperClient extends \yii\base\Object
         return $this->call($params);
     }
 
+	public function getPrice($product_id)
+	{
+		$params = [
+			"method" => "call",
+			"params" => [
+				$this->session, "product.promo.info",
+				[$product_id],
+			],
+		];
+
+		try {
+			$promo = $this->call($params);
+		} catch (\yii\base\Exception $e) {
+			$promo = null;
+		}
+		return $promo;
+	}
+
     public function setPrice($product_id, $price, $promo = null)
     {
         if ($promo === null) {
-            $params = [
-                "method" => "call",
-                "params" => [
-                    $this->session, "product.promo.info",
-                    [$product_id],
-                ],
-            ];
-
-            try {
-                $promo = $this->call($params);
-            } catch (\yii\base\Exception $e) {
-                $promo = null;
-            }
+			$promo = $this->getPrice($product_id);
         }
 
         $params = [
