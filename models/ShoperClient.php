@@ -100,20 +100,29 @@ class ShoperClient extends \yii\base\Object
         return $result;
     }
 
-    public function getProductsList($extended = true, $ids = null)
+	/**
+	 * @param bool $extended czy zwrócić informacje o obiektach
+	 * @param bool $translations czy zwrocić dodatkowo informacje o tłumaczeniach
+	 * @param bool $options czy zwrócić dodatkowo informacje o wariantach
+	 * @param bool $gfx czy zwrócić dodatkowo informacje o zdjęciach
+	 * @param bool $attributes czy zwrócić dodatkowo informacje o atrybutach
+	 * @param array $products tablica identyfikatorów obiektów do pobrania lub **null** w celu pobrania wszystkich dostępnych obiektów
+	 * @return array
+	 */
+    public function getProductsList($extended = true, $translations = false, $options = false, $gfx = false, $attributes = false, $products = null)
     {
         $params = [
             "method" => "call",
             "params" => [
-                $this->session, "product.list",
+				$this->session,
+				"product.list",
                 [
-                    $extended, // extended (boolean) - czy zwrócić informacje o obiektach
-                    false, // translations (boolean) - czy zwrocić dodatkowo informacje o tłumaczeniach
-                    false, // options (boolean) - czy zwrócić dodatkowo informacje o wariantach
-                    false, // gfx (boolean) - czy zwrócić dodatkowo informacje o zdjęciach
-                    true, // attributes (boolean) - czy zwrócić dodatkowo informacje o atrybutach
-                    $ids, // products (array|null) - tablica identyfikatorów obiektów do pobrania
-                    // lub **null** w celu pobrania wszystkich dostępnych obiektów
+                    $extended,
+                    $translations,
+                    $options,
+                    $gfx,
+                    $attributes,
+                    $products,
                 ],
             ],
         ];
@@ -121,39 +130,47 @@ class ShoperClient extends \yii\base\Object
         return $this->call($params);
     }
 
-    public function getAttributesList()
+	/**
+	 * @param bool $extended czy zwrócić tylko listę identyfikatorów (false), czy tablicę, której wartościami
+	 *                       są tablice asocjacyjne informacji o żądanych obiektach (true)
+	 * @param array $attributes tablica identyfikatorów obiektów do pobrania lub null w celu pobrania
+	 *                          wszystkich dostępnych obiektów
+	 * @return array
+	 */
+    public function getAttributesList($extended = true, $attributes = null)
     {
         $params = [
             "method" => "call",
             "params" => [
-                $this->session, "attribute.list",
-                [
-                    true, // extended (boolean) - czy zwrócić tylko listę identyfikatorów (false),
-                    // czy tablicę, której wartościami są tablice asocjacyjne informacji o żądanych obiektach (true)
-                    null, // attributes (array|null) - tablica identyfikatorów obiektów do pobrania
-                    // lub null w celu pobrania wszystkich dostępnych obiektów
-                ],
+				$this->session, "attribute.list", [
+					$extended,
+					$attributes,
+				],
             ],
         ];
 
         return $this->call($params);
     }
 
-    public function setAttributes($product_id, $attributes)
+    public function setAttributes($product_id, $attributes, $force = true)
     {
         $params = [
             "method" => "call",
             "params" => [
-                $this->session, "product.attributes.save",
-                [
+                $this->session, "product.attributes.save", [
                     $product_id,
                     $attributes,
-                    true, // force
+                    $force,
                 ],
             ],
         ];
 
-        return $this->call($params);
+		$result = $this->call($params);
+		if ($result[0] === -1) {
+			throw new Exception('While setting product '.$product_id.' attributes to '.var_export($attributes, true)
+				. ' the following errors occured: '.implode('',$this->getError()));
+		}
+		return $result;
     }
 
 	public function getPrice($product_id)
@@ -161,8 +178,7 @@ class ShoperClient extends \yii\base\Object
 		$params = [
 			"method" => "call",
 			"params" => [
-				$this->session, "product.promo.info",
-				[$product_id],
+				$this->session, "product.promo.info", [$product_id],
 			],
 		];
 
@@ -183,13 +199,14 @@ class ShoperClient extends \yii\base\Object
         $params = [
             "method" => "call",
             "params" => [
-                $this->session, "product.promo.create",
-                [
+				$this->session,
+				"product.promo.create",
+			   	[
                     $product_id,
 					[
-						is_array($promo) ? $promo['date_from'] : date('Y-m-d'),
-						is_array($promo) ? $promo['date_to'] : '2038-01-01',
-						$price,
+						'datefrom' => is_array($promo) ? $promo['date_from'] : date('Y-m-d'),
+						'dateto' => is_array($promo) ? $promo['date_to'] : '2038-01-01',
+						'promoprice' => $price,
 					],
                 ],
             ],
@@ -203,7 +220,8 @@ class ShoperClient extends \yii\base\Object
         $params = [
             "method" => "call",
             "params" => [
-                $this->session, "product.promo.delete",
+				$this->session,
+				"product.promo.delete",
                 [
                     $product_id,
                 ],

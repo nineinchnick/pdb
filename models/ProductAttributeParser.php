@@ -12,6 +12,9 @@ use yii\base\Exception;
 
 class ProductAttributeParser extends \nineinchnick\sync\models\Parser
 {
+	const ATTR_TEXT = 0;
+	const ATTR_BOOL = 1;
+	const ATTR_LIST = 2;
     /**
      * Either uploads a prepared file or downloads next file from a remote service.
      * Returns bool false if no files are available.
@@ -32,31 +35,56 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
      */
     public function process($file)
     {
-        set_time_limit(300);
+        set_time_limit(0);
         $client = new ShoperClient((array)json_decode($this->parser_options));
         $attributes = [];
         foreach ($client->getAttributesList() as $attribute) {
             $attribute = (array)$attribute;
-            $attributes[$attribute['name']] = $attribute['attribute_id'];
+			if ((int)$attribute['type'] !== self::ATTR_LIST) {
+				continue;
+			}
+			$attributes[$attribute['name']] = [];
+			foreach ($attribute['options'] as $option) {
+				$option = (array)$option;
+				// prepend o to properly handle numeric strings as associative keys
+				$attributes[trim($attribute['name'])]['o'.trim($option['value'])] = $attribute['attribute_id'];
+			}
         }
         $products = [];
         foreach (array_chunk($client->getProductsList(false), 1000) as $chunk) {
-            foreach ($client->getProductsList(true, $chunk) as $product) {
+            foreach ($client->getProductsList(true, false, false, false, true, $chunk) as $product) {
                 $product = (array)$product;
                 $products[$product['code']] = $product;
             }
         }
         $content = base64_decode($file->content);
         $counter = 0;
+		$attributeNames = [];
         foreach (explode("\r\n", $content) as $line) {
-            if ($counter++ === 0 || empty($line)) {
+            if ($counter++ === 0) {
+				$headers = str_getcsv($line, "\t");
+				if (count($headers) !== 6) {
+					throw new Exception('Invalid number of fields in line '.$counter.': '.$line);
+				}
+				$code = array_shift($headers);
+				$isPromo = array_shift($headers);
+				$price = array_shift($headers);
+				$attributeNames = array_map('trim', $headers);
+                continue;
+            }
+            if (empty($line)) {
                 continue;
             }
             $fields = str_getcsv($line, "\t");
             if (count($fields) !== 6) {
                 throw new Exception('Invalid number of fields in line '.$counter.': '.$line);
             }
-            list($code, $isPromo, $price, $sex, $size, $color) = $fields;
+			$code = array_shift($fields);
+			$isPromo = array_shift($fields);
+			$price = array_shift($fields);
+			$fields = array_map('trim', $fields);
+
+			// process prices
             if (!isset($products[$code]['product_id'])) {
                 continue;
             }
@@ -65,18 +93,20 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
             } elseif (isset($products[$code]['specialOffer'])) {
 				$client->delPrice($products[$code]['product_id']);
             }
+
+			// process attributes
             $setAttributes = [];
-            if (!empty($sex)) {
-                $setAttributes[$sex] = $sex;
-            }
-            if (!empty($size)) {
-                $setAttributes[$size]  = $size;
-            }
-            if (!empty($color)) {
-                $setAttributes[$color] = $color;
-            }
+			foreach ($fields as $key => $field) {
+				$attributeName = $attributeNames[$key];
+				// prepend o to properly handle numeric strings as associative keys
+				if (!empty($field) && isset($attributes[$attributeName], $attributes[$attributeName]['o'.$field])) {
+					$setAttributes[$attributes[$attributeName]['o'.$field]] = $field;
+				}
+			}
             if (!empty($setAttributes)) {
-                $client->setAttributes($products[$code]['product_id'], $setAttributes);
+                $result = $client->setAttributes($products[$code]['product_id'], $setAttributes);
+				var_dump($result, $setAttributes);
+				exit(0);
             }
         }
 
