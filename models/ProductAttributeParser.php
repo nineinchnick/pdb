@@ -105,8 +105,6 @@ class ProductAttributeParser extends \nineinchnick\sync\models\Parser
 			}
             if (!empty($setAttributes)) {
                 $result = $client->setAttributes($products[$code]['product_id'], $setAttributes);
-				var_dump($result, $setAttributes);
-				exit(0);
             }
         }
 

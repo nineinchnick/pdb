@@ -166,6 +166,9 @@ class ShoperClient extends \yii\base\Object
         ];
 
 		$result = $this->call($params);
+		if (!isset($result[0])) {
+			return false;
+		}
 		if ($result[0] === -1) {
 			throw new Exception('While setting product '.$product_id.' attributes to '.var_export($attributes, true)
 				. ' the following errors occured: '.implode('',$this->getError()));
